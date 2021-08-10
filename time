@@ -76,12 +76,12 @@ fi
 
 ###checksum
 
-checksum=$(( $date + $month + $hour + $min + $sec + 101 ))
+checksum=$(( $date + $month + $hour + $min + $sec + 103 ))
 c=$(printf '%x\n' $checksum)
 
 # create packet time packet 
 
-echo "55 aa 01 00 4a 02 06 00 13 $mon $d $h $m $s 00 00 00 00 00 00 00 00 00 00 00 00 $c 01" | xxd -ps -r  > 4
+echo "55 aa 01 00 4a 02 06 00 15 $mon $d $h $m $s 00 00 00 00 00 00 00 00 00 00 00 00 $c 01" | xxd -ps -r  > 4
 
  
 #send packets
